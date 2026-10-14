@@ -41,7 +41,7 @@ class Result:
 def open_database(path: str) -> sqlite3.Connection:
     """Fail for missing files and enforce read-only access at SQLite level."""
     uri = Path(path).resolve().as_uri() + "?mode=ro"
-    conn = sqlite3.connect(uri)
+    conn = sqlite3.connect(uri, uri=True)
     conn.execute("PRAGMA query_only = ON")
     return conn
 

@@ -2,6 +2,7 @@
 import json
 import sqlite3
 import unittest
+from tempfile import TemporaryDirectory
 from contextlib import closing
 from pathlib import Path
 from types import SimpleNamespace
@@ -22,6 +23,23 @@ class PipelineTests(unittest.TestCase):
     def test_read_and_truncation(self):
         columns, rows, truncated = execute_sql(self.conn, "WITH x AS (SELECT * FROM example) SELECT * FROM x", limit=1)
         self.assertEqual((columns, rows, truncated), (["n"], [(1,)], True))
+
+    def test_database_uri_is_read_only_and_missing_files_are_not_created(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "bank #1?.sqlite"
+            with closing(sqlite3.connect(path)) as conn:
+                conn.execute("CREATE TABLE example (n INTEGER)")
+                conn.execute("INSERT INTO example VALUES (7)")
+                conn.commit()
+            with closing(open_database(str(path))) as conn:
+                self.assertEqual(conn.execute("SELECT n FROM example").fetchall(), [(7,)])
+                conn.execute("PRAGMA query_only=OFF")
+                with self.assertRaises(sqlite3.OperationalError):
+                    conn.execute("INSERT INTO example VALUES (8)")
+            missing = Path(directory) / "missing.sqlite"
+            with self.assertRaises(sqlite3.OperationalError):
+                open_database(str(missing))
+            self.assertFalse(missing.exists())
 
     def test_prohibited_operations(self):
         for sql in ["DELETE FROM example", "DROP TABLE example", "PRAGMA query_only=OFF",

@@ -4,9 +4,9 @@
   "questions": 10,
   "attempted": 10,
   "passed": 10,
-  "p50_seconds": 1.3926844375091605,
+  "p50_seconds": 1.3726217915004781,
   "input_tokens": 19153,
-  "output_tokens": 2915,
+  "output_tokens": 2438,
   "results": {
     "q_001": {
       "sql": "SELECT COUNT(DISTINCT a.account_id) AS account_count\nFROM account a\nJOIN district d ON a.district_id = d.district_id\nWHERE d.A3 = 'Prague' COLLATE NOCASE;",
@@ -20,16 +20,16 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 2.0408970409771428,
+      "seconds": 1.2524239580006906,
       "attempts": 1,
       "input_tokens": 1907,
       "output_tokens": 256,
       "status": "pass"
     },
     "q_002": {
-      "sql": "SELECT SUM(amount) AS total_approved_amount FROM loan WHERE status = 'A';",
+      "sql": "SELECT SUM(amount) AS total_amount FROM loan WHERE status = 'A';",
       "columns": [
-        "total_approved_amount"
+        "total_amount"
       ],
       "rows": [
         [
@@ -38,16 +38,16 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 0.8162532079732046,
+      "seconds": 0.7845652500000142,
       "attempts": 1,
       "input_tokens": 1916,
-      "output_tokens": 135,
+      "output_tokens": 119,
       "status": "pass"
     },
     "q_003": {
-      "sql": "SELECT COUNT(*) AS owner_count FROM disp WHERE type = 'OWNER';",
+      "sql": "SELECT COUNT(*) AS owner_disp_count FROM disp WHERE type = 'OWNER';",
       "columns": [
-        "owner_count"
+        "owner_disp_count"
       ],
       "rows": [
         [
@@ -56,14 +56,14 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 1.0194746250053868,
+      "seconds": 1.9345207090000258,
       "attempts": 1,
       "input_tokens": 1908,
-      "output_tokens": 118,
+      "output_tokens": 132,
       "status": "pass"
     },
     "q_004": {
-      "sql": "SELECT ROUND(AVG(payments), 2) AS avg_monthly_payment FROM loan;",
+      "sql": "SELECT ROUND(AVG(payments), 2) AS avg_monthly_payment\nFROM loan;",
       "columns": [
         "avg_monthly_payment"
       ],
@@ -74,16 +74,16 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 0.4959439999656752,
+      "seconds": 0.8712326670001858,
       "attempts": 1,
       "input_tokens": 1908,
-      "output_tokens": 92,
+      "output_tokens": 93,
       "status": "pass"
     },
     "q_005": {
-      "sql": "SELECT COUNT(DISTINCT c.client_id) AS female_clients_count\nFROM client c\nJOIN district d ON c.district_id = d.district_id\nWHERE c.gender = 'F'\n  AND d.A11 > 10000;",
+      "sql": "SELECT COUNT(*) AS female_clients\nFROM client\nJOIN district ON client.district_id = district.district_id\nWHERE client.gender = 'F'\n  AND district.A11 > 10000;",
       "columns": [
-        "female_clients_count"
+        "female_clients"
       ],
       "rows": [
         [
@@ -92,10 +92,10 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 1.243420916958712,
+      "seconds": 1.116545999999289,
       "attempts": 1,
       "input_tokens": 1915,
-      "output_tokens": 230,
+      "output_tokens": 177,
       "status": "pass"
     },
     "q_006": {
@@ -110,14 +110,14 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 1.501127874944359,
+      "seconds": 1.444025583000439,
       "attempts": 1,
       "input_tokens": 1913,
-      "output_tokens": 236,
+      "output_tokens": 239,
       "status": "pass"
     },
     "q_007": {
-      "sql": "SELECT SUM(amount) AS total_amount\nFROM trans\nWHERE account_id = 1\n  AND date >= '1997-01-01'\n  AND date <= '1997-12-31';",
+      "sql": "SELECT SUM(amount) AS total_amount\nFROM trans\nWHERE account_id = 1\n  AND date BETWEEN '1997-01-01' AND '1997-12-31';",
       "columns": [
         "total_amount"
       ],
@@ -128,14 +128,14 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 1.284241000073962,
+      "seconds": 1.3012180000005173,
       "attempts": 1,
       "input_tokens": 1911,
-      "output_tokens": 188,
+      "output_tokens": 201,
       "status": "pass"
     },
     "q_008": {
-      "sql": "SELECT d.A2 AS district_name,\n       COUNT(DISTINCT disp.client_id) AS owner_count\nFROM disp\nJOIN account a ON disp.account_id = a.account_id\nJOIN district d ON a.district_id = d.district_id\nWHERE disp.type = 'OWNER'\n  AND d.A3 = 'south Moravia' COLLATE NOCASE\nGROUP BY d.district_id, d.A2\nORDER BY owner_count DESC;",
+      "sql": "SELECT d.A2 AS district_name,\n       COUNT(DISTINCT dp.client_id) AS owner_count\nFROM disp dp\nJOIN account a ON dp.account_id = a.account_id\nJOIN district d ON a.district_id = d.district_id\nWHERE d.A3 = 'south Moravia' COLLATE NOCASE\n  AND dp.type = 'OWNER'\nGROUP BY d.district_id, d.A2\nORDER BY owner_count DESC;",
       "columns": [
         "district_name",
         "owner_count"
@@ -200,14 +200,14 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 1.5990686250152066,
+      "seconds": 2.884720084000037,
       "attempts": 1,
       "input_tokens": 1927,
-      "output_tokens": 310,
+      "output_tokens": 353,
       "status": "pass"
     },
     "q_009": {
-      "sql": "SELECT d.client_id, c.gender, SUM(l.amount) AS total_loan_amount\nFROM disp d\nJOIN account a ON d.account_id = a.account_id\nJOIN loan l ON a.account_id = l.account_id\nJOIN client c ON d.client_id = c.client_id\nWHERE d.type = 'OWNER'\nGROUP BY d.client_id, c.gender\nORDER BY total_loan_amount DESC\nLIMIT 5;",
+      "sql": "SELECT d.client_id,\n       c.gender,\n       SUM(l.amount) AS total_loan_amount\nFROM disp d\nJOIN account a ON d.account_id = a.account_id\nJOIN loan l ON a.account_id = l.account_id\nJOIN client c ON d.client_id = c.client_id\nWHERE d.type = 'OWNER'\nGROUP BY d.client_id, c.gender\nORDER BY total_loan_amount DESC\nLIMIT 5;",
       "columns": [
         "client_id",
         "gender",
@@ -242,14 +242,14 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 2.2064922080608085,
+      "seconds": 1.8104454579997764,
       "attempts": 1,
       "input_tokens": 1925,
-      "output_tokens": 495,
+      "output_tokens": 372,
       "status": "pass"
     },
     "q_010": {
-      "sql": "SELECT COUNT(DISTINCT loan.loan_id) AS loan_count\nFROM loan\nJOIN account ON loan.account_id = account.account_id\nJOIN disp ON disp.account_id = account.account_id AND disp.type = 'OWNER'\nJOIN client ON client.client_id = disp.client_id AND client.gender = 'M'\nJOIN district ON client.district_id = district.district_id AND district.A3 = 'north Bohemia' COLLATE NOCASE\nWHERE loan.status = 'C';",
+      "sql": "SELECT COUNT(*) AS loan_count\nFROM loan l\nJOIN account a ON l.account_id = a.account_id\nJOIN disp d ON d.account_id = a.account_id AND d.type = 'OWNER'\nJOIN client c ON d.client_id = c.client_id AND c.gender = 'M'\nJOIN district di ON c.district_id = di.district_id AND di.A3 = 'north Bohemia' COLLATE NOCASE\nWHERE l.status = 'C';",
       "columns": [
         "loan_count"
       ],
@@ -260,10 +260,10 @@
       ],
       "truncated": false,
       "error": null,
-      "seconds": 6.877559415996075,
+      "seconds": 2.063275708999754,
       "attempts": 1,
       "input_tokens": 1923,
-      "output_tokens": 855,
+      "output_tokens": 496,
       "status": "pass"
     }
   }

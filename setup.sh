@@ -55,9 +55,15 @@ if [ ! -f "$FINANCIAL_DIR/financial.sqlite" ]; then
     exit 1
 fi
 
-rm -rf data/financial.sqlite data/database_description
 cp "$FINANCIAL_DIR/financial.sqlite" data/financial.sqlite
-cp -R "$FINANCIAL_DIR/database_description" data/database_description
+# Keep the reviewed descriptions shipped with this repository.
+mkdir -p data/database_description
+for description in "$FINANCIAL_DIR/database_description/"*.csv; do
+    destination="data/database_description/$(basename "$description")"
+    if [ ! -f "$destination" ]; then
+        cp "$description" "$destination"
+    fi
+done
 
 echo "Successfully installed data/financial.sqlite and data/database_description/"
 echo ""

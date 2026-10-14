@@ -4,39 +4,39 @@
     "answer": "account_count\n554"
   },
   "q_002": {
-    "sql": "SELECT SUM(amount) AS total_approved_amount FROM loan WHERE status = 'A';",
-    "answer": "total_approved_amount\n18603216"
+    "sql": "SELECT SUM(amount) AS total_amount FROM loan WHERE status = 'A';",
+    "answer": "total_amount\n18603216"
   },
   "q_003": {
-    "sql": "SELECT COUNT(*) AS owner_count FROM disp WHERE type = 'OWNER';",
-    "answer": "owner_count\n4500"
+    "sql": "SELECT COUNT(*) AS owner_disp_count FROM disp WHERE type = 'OWNER';",
+    "answer": "owner_disp_count\n4500"
   },
   "q_004": {
-    "sql": "SELECT ROUND(AVG(payments), 2) AS avg_monthly_payment FROM loan;",
+    "sql": "SELECT ROUND(AVG(payments), 2) AS avg_monthly_payment\nFROM loan;",
     "answer": "avg_monthly_payment\n4190.66"
   },
   "q_005": {
-    "sql": "SELECT COUNT(DISTINCT c.client_id) AS female_clients_count\nFROM client c\nJOIN district d ON c.district_id = d.district_id\nWHERE c.gender = 'F'\n  AND d.A11 > 10000;",
-    "answer": "female_clients_count\n636"
+    "sql": "SELECT COUNT(*) AS female_clients\nFROM client\nJOIN district ON client.district_id = district.district_id\nWHERE client.gender = 'F'\n  AND district.A11 > 10000;",
+    "answer": "female_clients\n636"
   },
   "q_006": {
     "sql": "SELECT COUNT(DISTINCT d.client_id) AS owner_count\nFROM disp d\nJOIN account a ON d.account_id = a.account_id\nJOIN district di ON a.district_id = di.district_id\nWHERE d.type = 'OWNER'\n  AND di.A3 = 'Prague' COLLATE NOCASE;",
     "answer": "owner_count\n554"
   },
   "q_007": {
-    "sql": "SELECT SUM(amount) AS total_amount\nFROM trans\nWHERE account_id = 1\n  AND date >= '1997-01-01'\n  AND date <= '1997-12-31';",
+    "sql": "SELECT SUM(amount) AS total_amount\nFROM trans\nWHERE account_id = 1\n  AND date BETWEEN '1997-01-01' AND '1997-12-31';",
     "answer": "total_amount\n96418"
   },
   "q_008": {
-    "sql": "SELECT d.A2 AS district_name,\n       COUNT(DISTINCT disp.client_id) AS owner_count\nFROM disp\nJOIN account a ON disp.account_id = a.account_id\nJOIN district d ON a.district_id = d.district_id\nWHERE disp.type = 'OWNER'\n  AND d.A3 = 'south Moravia' COLLATE NOCASE\nGROUP BY d.district_id, d.A2\nORDER BY owner_count DESC;",
+    "sql": "SELECT d.A2 AS district_name,\n       COUNT(DISTINCT dp.client_id) AS owner_count\nFROM disp dp\nJOIN account a ON dp.account_id = a.account_id\nJOIN district d ON a.district_id = d.district_id\nWHERE d.A3 = 'south Moravia' COLLATE NOCASE\n  AND dp.type = 'OWNER'\nGROUP BY d.district_id, d.A2\nORDER BY owner_count DESC;",
     "answer": "district_name | owner_count\nBrno - mesto | 128\nZlin | 92\nKromeriz | 57\nBrno - venkov | 53\nZdar nad Sazavou | 53\nProstejov | 51\nBlansko | 50\nVyskov | 49\nTrebic | 45\nBreclav | 44\nUherske Hradiste | 44\nHodonin | 41\nZnojmo | 39\nJihlava | 32"
   },
   "q_009": {
-    "sql": "SELECT d.client_id, c.gender, SUM(l.amount) AS total_loan_amount\nFROM disp d\nJOIN account a ON d.account_id = a.account_id\nJOIN loan l ON a.account_id = l.account_id\nJOIN client c ON d.client_id = c.client_id\nWHERE d.type = 'OWNER'\nGROUP BY d.client_id, c.gender\nORDER BY total_loan_amount DESC\nLIMIT 5;",
+    "sql": "SELECT d.client_id,\n       c.gender,\n       SUM(l.amount) AS total_loan_amount\nFROM disp d\nJOIN account a ON d.account_id = a.account_id\nJOIN loan l ON a.account_id = l.account_id\nJOIN client c ON d.client_id = c.client_id\nWHERE d.type = 'OWNER'\nGROUP BY d.client_id, c.gender\nORDER BY total_loan_amount DESC\nLIMIT 5;",
     "answer": "client_id | gender | total_loan_amount\n9340 | M | 590820\n10997 | F | 566640\n2823 | F | 541200\n981 | M | 538500\n3546 | M | 504000"
   },
   "q_010": {
-    "sql": "SELECT COUNT(DISTINCT loan.loan_id) AS loan_count\nFROM loan\nJOIN account ON loan.account_id = account.account_id\nJOIN disp ON disp.account_id = account.account_id AND disp.type = 'OWNER'\nJOIN client ON client.client_id = disp.client_id AND client.gender = 'M'\nJOIN district ON client.district_id = district.district_id AND district.A3 = 'north Bohemia' COLLATE NOCASE\nWHERE loan.status = 'C';",
+    "sql": "SELECT COUNT(*) AS loan_count\nFROM loan l\nJOIN account a ON l.account_id = a.account_id\nJOIN disp d ON d.account_id = a.account_id AND d.type = 'OWNER'\nJOIN client c ON d.client_id = c.client_id AND c.gender = 'M'\nJOIN district di ON c.district_id = di.district_id AND di.A3 = 'north Bohemia' COLLATE NOCASE\nWHERE l.status = 'C';",
     "answer": "loan_count\n18"
   }
 }

@@ -23,7 +23,7 @@ uv run python -m src.cli
 uv run cli --db data/financial.sqlite --descriptions data/database_description
 ```
 
-Ask “How many bank accounts are located in the Prague region?” and then “What about south Moravia?” SQL, results, elapsed time, and model-call count are displayed. `/reset` clears context; `exit`, `quit`, or EOF ends the session. Ctrl-C cancels input or an active query. Activate `.venv` first if using `python -m src.cli` directly.
+Ask “How many bank accounts are located in the Prague region?” and then “What about south Moravia?” SQL, results, elapsed time, and model-call count are displayed. `/reset` clears context; `exit`, `quit`, or EOF ends the session. Ctrl-C cancels input or an active query. Activate `.venv` first if using `python -m src.cli` directly. Setup preserves the reviewed column descriptions already in the repository.
 
 ## Design choices
 
@@ -56,13 +56,13 @@ The baseline uses the customer's minimal question prompt plus the same JSON Sche
 
 ### Current validation status
 
-Live evaluation on October 2, 2026 used `accounts/fireworks/models/gpt-oss-120b`:
+Live grounded evaluation on October 14, 2026 used `accounts/fireworks/models/gpt-oss-120b`:
 
 | Run | Result matches | Median query latency | Input tokens, total | Output tokens, total | Repair calls |
 | --- | --- | --- | --- | --- | --- |
-| Grounded agent | 10/10 | 1.35 s | 19,153 | 2,915 | 0 |
-| Grounded agent, repeat | 10/10 | 1.39 s | 19,153 | 2,915 | 0 |
-| Minimal-prompt baseline | 0/10 | 1.17 s | 1,373 | 2,558 | 0 |
+| Grounded agent | 10/10 | 1.83 s | 19,153 | 2,438 | 0 |
+| Grounded agent, repeat | 10/10 | 1.37 s | 19,153 | 2,438 | 0 |
+| Minimal-prompt baseline (October 2) | 0/10 | 1.17 s | 1,373 | 2,558 | 0 |
 
 Both consecutive grounded runs passed all ten questions. Four additional live questions covering explicit branch geography, residence, and follow-ups also matched independently executed reference queries. Repeat outputs are saved in `dev_answers_repeat.json` and `dev_answers_repeat_report.json`. The earlier q_008 failure used client residence instead of account branch geography. Correcting the misleading client documentation and supplying explicit join paths fixed it: the query now counts 128 owners in Brno - mesto through account branches. These definitions are general dataset semantics, not stored answers or per-question SQL. All baseline queries failed execution due to invented table names.
 
@@ -70,11 +70,11 @@ The live CLI returned 554 Prague accounts, then correctly handled “What about 
 
 The committed `dev_answers.json` and report contain actual outputs, for all ten passing queries. The baseline outputs are in `baseline_answers.json` and `baseline_answers_report.json`. An earlier JSON-mode run passed 10/10 but needed eight repairs; inspection found wrong JSON field names. An explicit output schema eliminated those repairs. A later run exposed case-sensitive region matching, fixed with a case-insensitive comparison instruction. The residence/branch error was then resolved through documentation and explicit business join definitions. These are development-set iterations, not an unseen accuracy estimate; no claim of repeatable 100% accuracy is made.
 
-Eight offline tests and two opt-in live tests (four model queries) passed, including execution of all ten supplied gold queries. Checks cover denied SQL operations, CTE reads, truncation, timeout recovery, mocked model repair and conversation context, and scoring behavior. Executing supplied gold SQL against the database checks the fixtures and execution layer; it is not evidence of model accuracy.
+Nine offline tests and two opt-in live tests (four model queries) passed, including execution of all ten supplied gold queries. Checks cover read-only file URIs and missing-file handling, denied SQL operations, CTE reads, truncation, timeout recovery, mocked model repair and conversation context, and scoring behavior. Executing supplied gold SQL against the database checks the fixtures and execution layer; it is not evidence of model accuracy.
 
 ## Latency, cost, and next steps
 
-Next, repeat these measurements on unseen questions and compare another available model for semantic reliability. Repeated runs should record P50/P95, failures, cold-start behavior, repairs, and tokens. The current median covers `Agent.ask()` (API, parsing, repair, and SQL; formatting excluded); it excludes startup/schema loading and terminal rendering. The slowest query took 6.88 seconds in the repeat run, so tail latency still needs work. Ten dev questions cannot establish the customer's <3-second production P50 target.
+Next, repeat these measurements on unseen questions and compare another available model for semantic reliability. Repeated runs should record P50/P95, failures, cold-start behavior, repairs, and tokens. The current median covers `Agent.ask()` (API, parsing, repair, and SQL; formatting excluded); it excludes startup/schema loading and terminal rendering. The slowest query took 2.88 seconds in the repeat run, so tail latency still needs work. Ten dev questions cannot establish the customer's <3-second production P50 target.
 
 For pricing rates P_in/P_out in dollars per million tokens, cost per query is `(mean_input_tokens * P_in + mean_output_tokens * P_out) / 1_000_000`. Multiply by 30,000 for projected daily model cost. Include repair calls (already accumulated by the evaluator). Use current account/model rates from Fireworks; no unverified price or cost savings are claimed. Open-weight models offer cost/control options but must earn selection through measured accuracy and latency; proprietary models are useful comparison points if budget permits.
 
