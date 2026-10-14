@@ -1,0 +1,11 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+.DS_Store
+
+# Recreated by setup.sh from the checksummed BIRD bundle
+data/financial.sqlite
+
+# Packaged submission artifact
+fireworks-text-to-sql-submission.zip

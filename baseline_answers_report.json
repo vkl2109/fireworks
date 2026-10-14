@@ -1,0 +1,132 @@
+{
+  "model": "accounts/fireworks/models/gpt-oss-120b",
+  "baseline": true,
+  "questions": 10,
+  "attempted": 10,
+  "passed": 0,
+  "p50_seconds": 1.1737065210472792,
+  "input_tokens": 1373,
+  "output_tokens": 2558,
+  "results": {
+    "q_001": {
+      "sql": "SELECT COUNT(*) AS account_count FROM bank_accounts WHERE region = 'Prague';",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: bank_accounts",
+      "seconds": 1.1954797500511631,
+      "attempts": 1,
+      "input_tokens": 129,
+      "output_tokens": 193,
+      "status": "fail"
+    },
+    "q_002": {
+      "sql": "SELECT SUM(approved_amount) AS total_approved_amount\nFROM loans\nWHERE contract_status = 'finished'\n  AND payment_status = 'fully_paid'\n  AND (problem_flag = FALSE OR problem_flag = 0);",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: loans",
+      "seconds": 1.0409507079748437,
+      "attempts": 1,
+      "input_tokens": 138,
+      "output_tokens": 266,
+      "status": "fail"
+    },
+    "q_003": {
+      "sql": "SELECT COUNT(*) AS owner_count FROM disposition WHERE authorized_user = FALSE;",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: disposition",
+      "seconds": 1.1519332920433953,
+      "attempts": 1,
+      "input_tokens": 130,
+      "output_tokens": 251,
+      "status": "fail"
+    },
+    "q_004": {
+      "sql": "SELECT AVG(monthly_payment) AS average_monthly_payment FROM loans;",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: loans",
+      "seconds": 0.892130707972683,
+      "attempts": 1,
+      "input_tokens": 130,
+      "output_tokens": 186,
+      "status": "fail"
+    },
+    "q_005": {
+      "sql": "SELECT COUNT(*) AS female_client_count\nFROM clients c\nWHERE c.gender = 'Female'\n  AND c.district_id IN (\n    SELECT s.district_id\n    FROM salaries s\n    GROUP BY s.district_id\n    HAVING AVG(s.salary) > 10000\n  );",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: clients",
+      "seconds": 1.6774909580126405,
+      "attempts": 1,
+      "input_tokens": 137,
+      "output_tokens": 278,
+      "status": "fail"
+    },
+    "q_006": {
+      "sql": "SELECT COUNT(DISTINCT ao.client_id) AS distinct_client_count\nFROM account_owners ao\nJOIN accounts a ON ao.account_id = a.id\nWHERE a.region = 'Prague';",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: account_owners",
+      "seconds": 1.1959805000806227,
+      "attempts": 1,
+      "input_tokens": 135,
+      "output_tokens": 243,
+      "status": "fail"
+    },
+    "q_007": {
+      "sql": "SELECT SUM(amount) AS total_amount FROM transactions WHERE account_id = 1 AND transaction_date >= '1997-01-01' AND transaction_date < '1998-01-01';",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: transactions",
+      "seconds": 1.082078207982704,
+      "attempts": 1,
+      "input_tokens": 133,
+      "output_tokens": 239,
+      "status": "fail"
+    },
+    "q_008": {
+      "sql": "SELECT d.district_name AS district, COUNT(DISTINCT a.owner_id) AS owner_count\nFROM accounts a\nJOIN districts d ON a.district_id = d.district_id\nWHERE d.region_name = 'South Moravia'\nGROUP BY d.district_name\nORDER BY owner_count DESC;",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: accounts",
+      "seconds": 1.4259615000337362,
+      "attempts": 1,
+      "input_tokens": 149,
+      "output_tokens": 250,
+      "status": "fail"
+    },
+    "q_009": {
+      "sql": "SELECT c.client_id,\n       c.gender,\n       SUM(l.amount) AS total_loan_amount\nFROM   clients c\nJOIN   accounts a ON a.client_id = c.client_id\nJOIN   loans l ON l.account_id = a.account_id\nWHERE  a.owner_status = 'owner'   -- adjust the value/column name as needed\nGROUP BY c.client_id, c.gender\nORDER BY total_loan_amount DESC\nLIMIT 5;",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: clients",
+      "seconds": 1.0267022920306772,
+      "attempts": 1,
+      "input_tokens": 147,
+      "output_tokens": 236,
+      "status": "fail"
+    },
+    "q_010": {
+      "sql": "SELECT COUNT(*) AS contract_count\nFROM loan_contracts lc\nJOIN accounts a ON lc.account_id = a.account_id\nJOIN clients c ON a.client_id = c.client_id\nJOIN regions r ON c.region_id = r.region_id\nWHERE lc.status = 'running'\n  AND lc.standing = 'good'\n  AND c.gender = 'Male'\n  AND r.name = 'North Bohemia';",
+      "columns": [],
+      "rows": [],
+      "truncated": false,
+      "error": "no such table: loan_contracts",
+      "seconds": 1.6943225419381633,
+      "attempts": 1,
+      "input_tokens": 145,
+      "output_tokens": 416,
+      "status": "fail"
+    }
+  }
+}
